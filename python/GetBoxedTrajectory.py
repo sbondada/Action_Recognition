@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import time
 
-def getTrajectories(filepath,startframe,endframe,x,y,width,height):
+def getTrajectories(filepath,startframe,endframe,trajectoylength,x,y,width,height):
     f=open(filepath)
     filepathsplit=str(filepath).split('.')
     filepathsplit[-2]='.dt.'
@@ -18,17 +18,20 @@ def getTrajectories(filepath,startframe,endframe,x,y,width,height):
     yEndLimit=y+height
     for line in f:
         linesplit=str(line).split('\t')
-        condition=True
-        for i in range(11,40,2):
-            x=float(linesplit[i])
-            y=float(linesplit[i+1])
-            if (x<=xEndLimit and x>xStartLimit and y<=yEndLimit and y>yStartLimit):
-                condition=condition and True 
-            else:
-                condition=condition and False
-        print condition 
-        if condition==True:
-            f1.write(line)
+        if int(math.ceil(float(linesplit[1])))>=startframe and int(math.ceil(float(linesplit[1])))<=endframe:
+            condition=True
+            inc=0
+            for i in range(11,40,2):
+                x=float(linesplit[i])
+                y=float(linesplit[i+1])
+                if (x<=xEndLimit and x>xStartLimit and y<=yEndLimit and y>yStartLimit):
+                    condition=condition and True 
+                    inc+=1;
+                else:
+                    condition=condition and False
+            print condition 
+            if inc>=trajectoylength/2 or condition==True:
+                f1.write(line)
     f1.close
     f.close
 
@@ -85,5 +88,5 @@ def displayTrajectories(filepath,trajectorylength,x,y,w,h):
             break
     
 if __name__=="__main__":
-    #getTrajectories('../data/results/MSR2/10.avi.txt',25,600,70,40,70,75)
+    #getTrajectories('../data/results/MSR2/10.avi.txt',25,600,15,70,40,70,75)
     displayTrajectories('../data/MSR2/videos/10.avi',15,70,40,70,75)
