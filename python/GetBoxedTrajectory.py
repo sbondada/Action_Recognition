@@ -7,11 +7,18 @@ def getTrajectories(filepath,startframe,endframe,trajectoylength,x,y,width,heigh
     f=open(filepath)
     filepathsplit=str(filepath).split('.')
     filepathsplit[-2]='.dt.'
-    newfile='..'
+    newfile=''
     for part in filepathsplit:
         newfile+=part
+    newfilesplit=str(newfile).split('/')
+    newfilesplit.insert(-1,'seq2')
+    modfile=''
+    for index in range(len(newfilesplit)-1):
+        modfile+=newfilesplit[index]+'/'
+    modfile+=newfilesplit[-1]
+    print 'writing the file to this location :'+str(modfile)
 
-    f1=open(newfile,'w')
+    f1=open(modfile,'w')
     xStartLimit=x
     xEndLimit=x+width
     yStartLimit=y
@@ -38,7 +45,7 @@ def getTrajectories(filepath,startframe,endframe,trajectoylength,x,y,width,heigh
 def displayTrajectories(filepath,trajectorylength,x,y,w,h):
     filesplit=filepath.split('.')
     dirstruct=str(filesplit[2]).split('/')
-    moddirstruct="/"+dirstruct[1]+"/results/"+dirstruct[2]+"/"+dirstruct[4]
+    moddirstruct="/"+dirstruct[1]+"/results/"+dirstruct[2]+"/seq2"+dirstruct[4]
     dtfilename=".."+moddirstruct+".dt.txt"
     f=open(dtfilename)
 
@@ -87,6 +94,7 @@ def displayTrajectories(filepath,trajectorylength,x,y,w,h):
         if key in [27,ord('Q'),ord('q')]:
             break
     
+# do not use relative paths any where in the code
 if __name__=="__main__":
-    #getTrajectories('../data/results/MSR2/10.avi.txt',25,600,15,70,40,70,75)
-    displayTrajectories('../data/MSR2/videos/10.avi',15,70,40,70,75)
+    getTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/10.avi.txt',25,600,15,70,40,70,75)
+    #displayTrajectories('../data/MSR2/videos/10.avi',15,70,40,70,75)
