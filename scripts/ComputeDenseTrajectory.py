@@ -10,8 +10,7 @@ def computeDenseTrajectory(location2save):
         print splitstr
         for files in filenames :
             print files
-            if len(splitstr):
-                print "splitstr > 3 block"
+            if len(splitstr)>4:
                 p=subprocess.Popen(['./../release/DenseTrack',os.path.join(dirpath,files)],stdout=subprocess.PIPE)
                 (output,error)=p.communicate()
                 #print output
@@ -19,7 +18,6 @@ def computeDenseTrajectory(location2save):
                 f.write(output);
                 f.close
             else:
-                print "else block"
                 p=subprocess.Popen(['./../release/DenseTrack',os.path.join(dirpath,files)],stdout=subprocess.PIPE)
                 (output,error)=p.communicate()
                 #print output
@@ -29,4 +27,4 @@ def computeDenseTrajectory(location2save):
             #print files
 
 if __name__=='__main__':
-    computeDenseTrajectory('../data/MSR2/videos') 
+    computeDenseTrajectory('../data/KTH/videos') 
