@@ -32,19 +32,14 @@ def computeDTinBB(gt_location,save_location):
             y1=int(f.root.bb[1][0])
             x2=int(f.root.bb[2][0])
             y2=int(f.root.bb[3][0])
-            if x1>x2 and y1<y2:
-                x=x2
-                y=y2
-                w=x1-x2
-                h=y2-y1
-            else:
-                x=x1
-                y=y1
-                w=x2-x1
-                h=y1-y2
+            x=x1
+            y=y1
+            w=x2-x1
+            h=y2-y1
             startframe=int(f.root.start_frm[0][0])
             endframe=int(f.root.end_frm[0][0])
             gbt.getTrajectories(full_dtfile_location,startframe,endframe,15,x,y,w,h)
+            #print x,y,w,h,startframe,endframe
             
 if __name__=='__main__':
     computeDTinBB('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results')
