@@ -26,6 +26,20 @@ def randomLineSelection(noOfFiles,noOfLinesperFile,fileLocationList):
                     break
     return fileData
 
+def getBagOfWords(codebook,filename,binSize):
+    f=open(filename)
+    data=[]
+    for line in f:
+        linesplit=line.split('\t')
+        #print linesplit
+        floatlinesplit=[float(x) for x in linesplit[41:] if x!='\n']
+        data.append(floatlinesplit)
+    idx,_=vq(array(data),codebook)
+    bagofwords=[0]*binSize 
+    for indexEle in idx:
+        bagofwords[int(indexEle)]+=1
+    return bagofwords
+
 
 if __name__=="__main__":
     fileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2']
@@ -34,6 +48,7 @@ if __name__=="__main__":
     binSize=10
     randomLines=randomLineSelection(noOfFiles,noOfLinesperFile,fileLocationList)
     codebook,_ = kmeans(array(randomLines),binSize)
+    #getBagOfWords(codebook,'/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2/person01_boxing_d1_uncomp.dt.txt',binSize)
     codefile=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/codebook.pickle.txt','w')
     pickle.dump(codebook,codefile)
 
