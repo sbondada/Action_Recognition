@@ -44,9 +44,9 @@ def getTrajectories(filepath,startframe,endframe,trajectoylength,x,y,width,heigh
 
 def displayTrajectories(filepath,trajectorylength,x,y,w,h):
     filesplit=filepath.split('.')
-    dirstruct=str(filesplit[2]).split('/')
-    moddirstruct="/"+dirstruct[1]+"/results/"+dirstruct[2]+"/seq2"+dirstruct[4]
-    dtfilename=".."+moddirstruct+".dt.txt"
+    dirstruct=str(filesplit[0]).split('/')
+    moddirstruct="/"+dirstruct[1]+'/'+dirstruct[2]+'/'+dirstruct[3]+'/'+dirstruct[4]+'/'+dirstruct[5]+'/'+dirstruct[6]+"/results/"+dirstruct[7]+'/'+dirstruct[9]+"/seq2/"+dirstruct[10]
+    dtfilename=moddirstruct+".dt.txt"
     f=open(dtfilename)
 
     inc=0
@@ -96,5 +96,5 @@ def displayTrajectories(filepath,trajectorylength,x,y,w,h):
     
 # do not use relative paths any where in the code
 if __name__=="__main__":
-    getTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/10.avi.txt',25,600,15,70,40,70,75)
-    #displayTrajectories('../data/MSR2/videos/10.avi',15,70,40,70,75)
+    #getTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/10.avi.txt',25,600,15,70,40,70,75)
+    displayTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/KTH/videos/handclapping/person23_handclapping_d4_uncomp.avi',15,27,11,51,104)
