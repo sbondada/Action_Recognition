@@ -38,6 +38,7 @@ def getBagOfWords(codebook,filename,binSize):
     bagofwords=[0]*binSize 
     for indexEle in idx:
         bagofwords[int(indexEle)]+=1
+    bagofwords=[float(x)/len(idx) for x in bagofwords]
     return bagofwords
 
 
@@ -48,7 +49,8 @@ if __name__=="__main__":
     binSize=10
     randomLines=randomLineSelection(noOfFiles,noOfLinesperFile,fileLocationList)
     codebook,_ = kmeans(array(randomLines),binSize)
-    #getBagOfWords(codebook,'/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2/person01_boxing_d1_uncomp.dt.txt',binSize)
+    bow=getBagOfWords(codebook,'/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2/person01_boxing_d1_uncomp.dt.txt',binSize)
+    print bow
     codefile=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/codebook.pickle.txt','w')
-    pickle.dump(codebook,codefile)
+    #pickle.dump(codebook,codefile)
 
