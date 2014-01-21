@@ -27,9 +27,11 @@ def randomLineSelection(noOfFiles,noOfLinesperFile,fileLocationList):
             inc=0
             #looping the files names untill the nooffiles and then the loop is breaked
             for files in filenames:
-                f=open(os.path.join(dirpath,files))
+                filepath=os.path.join(dirpath,files)
+                print filepath
+                f=open(filepath)
                 lines=f.read().splitlines()
-                if inc<(noOfFiles/len(fileLocationList)):
+                if inc<(noOfFiles/len(fileLocationList)) and lines!=[]:
                     for i in range(noOfLinesperFile):
                         myline=random.choice(lines)
                         linesplit=myline.split('\t')
@@ -67,14 +69,14 @@ def getBagOfWords(codebook,filename,binSize):
 
 
 if __name__=="__main__":
-    fileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2']
-    noOfFiles=10
+    fileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2']
+    noOfFiles=120
     noOfLinesperFile=200
-    binSize=10
+    binSize=100
     randomLines=randomLineSelection(noOfFiles,noOfLinesperFile,fileLocationList)
     codebook,_ = kmeans(array(randomLines),binSize)
-    bow=getBagOfWords(codebook,'/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2/10.dt.txt',binSize)
-    print bow
-    #codefile=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/codebook.pickle.txt','w')
-    #pickle.dump(codebook,codefile)
+    #bow=getBagOfWords(codebook,'/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2/10.dt.txt',binSize)
+    #print bow
+    codefile=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/codebook.pickle.txt','w')
+    pickle.dump(codebook,codefile)
 
