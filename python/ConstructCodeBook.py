@@ -77,6 +77,6 @@ if __name__=="__main__":
     codebook,_ = kmeans(array(randomLines),binSize)
     #bow=getBagOfWords(codebook,'/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2/10.dt.txt',binSize)
     #print bow
-    codefile=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/codebook.pickle.txt','w')
+    codefile=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebook.pickle.txt','w')
     pickle.dump(codebook,codefile)
 

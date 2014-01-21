@@ -24,7 +24,9 @@ def computeBagOfWords(codefile,inputLocationList,binSize):
         print tempsavelocation
         for dirpath, dirnames, filenames in os.walk(dt_location):  
             for files in filenames:
-                bagofwords=ccb.getBagOfWords(codebook,os.path.join(dirpath,files),binSize)
+                filepath=os.path.join(dirpath,files)
+                print filepath
+                bagofwords=ccb.getBagOfWords(codebook,filepath,binSize)
                 #constructing a dict so that the bagofwords can be stored in .mat file
                 bowdict={'bagofwords':bagofwords}
                 #constructing the file name 
@@ -42,5 +44,5 @@ def computeBagOfWords(codefile,inputLocationList,binSize):
 
 
 if __name__=="__main__":
-    inputLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2']
-    computeBagOfWords('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/codebook.pickle.txt',inputLocationList,10)
+    inputLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2']
+    computeBagOfWords('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebook.pickle.txt',inputLocationList,100)
