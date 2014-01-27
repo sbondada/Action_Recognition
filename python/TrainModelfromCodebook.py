@@ -2,7 +2,9 @@ import os
 import numpy as np
 import scipy.io
 from sklearn import svm 
-import pickle
+#from sklearn.metrics.pairwise import chi2_kernel as chi2
+from sklearn.metrics.pairwise import additive_chi2_kernel as a_chi2
+from sklearn.kernel_approximation import  AdditiveChi2Sampler
 
 '''
 the file basically constructs the data abropriate for training and testing using svm
@@ -36,9 +38,14 @@ def constructTrainInputdata(fileLocationList,classLabelList):
                 inputClassLabel.append(classLabelList[inc])
     return (inputData,inputClassLabel)
 
+
 def constructModel(inputData,inputClassLabel):
-    #clf=svm.LinearSVC()
-    clf=svm.SVC()
+    #clf=svm.SVC(kernel=chi2)
+    clf=svm.SVC(kernel=a_chi2)
+    
+    #chi2_feature= AdditiveChi2Sampler(sample_steps=3)
+    #inputData=chi2_feature.fit_transform(inputData)
+    #clf=svm.SVC()
     clf.fit(inputData,inputClassLabel)
     return clf
 
@@ -72,6 +79,10 @@ if __name__=="__main__":
     print clf 
     testFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
     testData=constructTestInputdata(testFileLocationList)
+
+    #chi2_feature= AdditiveChi2Sampler(sample_steps=3)
+    #testData=chi2_feature.fit_transform(testData)
+
     predictInfo=clf.predict(testData)
     print testInfo[1]
     print predictInfo
