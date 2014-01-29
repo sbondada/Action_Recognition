@@ -6,8 +6,7 @@ import os
 def chiSquare(observed,expected):
     sumchi=0
     for i in range(len(observed)):
-        if expected[i]!=0:
-            sumchi+=float(math.pow(observed[i]-expected[i],2))/expected[i]
+        sumchi+=float(math.pow(observed[i]-expected[i],2))/(observed[i]+expected[i]+np.finfo(float).eps)
     return sumchi
 
 def constructData(fileLocationList):
@@ -39,9 +38,12 @@ def printResults(matchingList):
         print "\n" 
 
 if __name__=='__main__':
-    sourceFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2_bow']
-    destFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
-    sourceMatchList=constructData(sourceFileLocationList)
-    destMatchList=constructData(destFileLocationList)
-    matchingList=performSimilarityMatching(sourceMatchList,destMatchList)
-    printResults(matchingList)
+    KTHFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2_bow']
+    MSRFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
+    KTHMatchList=constructData(KTHFileLocationList)
+    MSRMatchList=constructData(MSRFileLocationList)
+    MSRKTHmachingList=performSimilarityMatching(MSRMatchList,KTHMatchList)
+    MSRMSRmatchingList=performSimilarityMatching(MSRMatchList,MSRMatchList)
+    KTHKTHmatchingList=performSimilarityMatching(KTHMatchList,KTHMatchList) 
+    matDict={"MSR_KTH":MSRKTHmachingList,"MSR_MSR":MSRMSRmatchingList,"KTH_KTH":KTHKTHmatchingList}
+    scipy.io.savemat("../data/results/matchinglist.mat",matDict)
