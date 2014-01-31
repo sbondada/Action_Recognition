@@ -2,8 +2,8 @@ import os
 import numpy as np
 import scipy.io
 from sklearn import svm 
-#from sklearn.metrics.pairwise import chi2_kernel as chi2
-from sklearn.metrics.pairwise import additive_chi2_kernel as a_chi2
+from sklearn.metrics.pairwise import chi2_kernel as chi2
+#from sklearn.metrics.pairwise import additive_chi2_kernel as a_chi2
 from sklearn.kernel_approximation import  AdditiveChi2Sampler
 
 '''
@@ -40,8 +40,8 @@ def constructTrainInputdata(fileLocationList,classLabelList):
 
 
 def constructModel(inputData,inputClassLabel):
-    #clf=svm.SVC(kernel=chi2)
-    clf=svm.SVC(kernel=a_chi2)
+    clf=svm.SVC(kernel=chi2)
+    #clf=svm.SVC(kernel=a_chi2)
     
     #chi2_feature= AdditiveChi2Sampler(sample_steps=3)
     #inputData=chi2_feature.fit_transform(inputData)
