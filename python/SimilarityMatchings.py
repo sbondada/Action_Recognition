@@ -1,4 +1,4 @@
-import math
+import math 
 import numpy as np
 import scipy.io
 import os
@@ -40,10 +40,14 @@ def printResults(matchingList):
 if __name__=='__main__':
     KTHFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2_bow']
     MSRFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
+    MSRDoubleFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow_double','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow_double','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow_double']
     KTHMatchList=constructData(KTHFileLocationList)
     MSRMatchList=constructData(MSRFileLocationList)
-    MSRKTHmachingList=performSimilarityMatching(MSRMatchList,KTHMatchList)
-    MSRMSRmatchingList=performSimilarityMatching(MSRMatchList,MSRMatchList)
-    KTHKTHmatchingList=performSimilarityMatching(KTHMatchList,KTHMatchList) 
-    matDict={"MSR_KTH":MSRKTHmachingList,"MSR_MSR":MSRMSRmatchingList,"KTH_KTH":KTHKTHmatchingList}
-    scipy.io.savemat("../data/results/matchinglist.mat",matDict)
+    MSRDoubleMatchList=constructData(MSRDoubleFileLocationList)
+    #MSRKTHmachingList=performSimilarityMatching(MSRMatchList,KTHMatchList)
+    #MSRMSRmatchingList=performSimilarityMatching(MSRMatchList,MSRMatchList)
+    #KTHKTHmatchingList=performSimilarityMatching(KTHMatchList,KTHMatchList) 
+    #matchDict={"MSR_KTH":MSRKTHmachingList,"MSR_MSR":MSRMSRmatchingList,"KTH_KTH":KTHKTHmatchingList}
+    bowDict={"KTH":KTHMatchList,"MSR": MSRMatchList,"MSR_Double":MSRDoubleMatchList}
+    #scipy.io.savemat("../data/results/matchinglist.mat",matDict)
+    scipy.io.savemat("../data/results/bowDoubleList.mat",bowDict)
