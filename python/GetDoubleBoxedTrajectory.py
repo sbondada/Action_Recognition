@@ -32,7 +32,7 @@ def getTrajectories(filepath,startframe,endframe,trajectoylength,x,y,width,heigh
         modfile+=newfilesplit[index]+'/'
     modfile+=newfilesplit[-1]
     print 'writing the file to this location :'+str(modfile)
-    #the files are saved at projdir/data/"dataset"/"action class"/seq2/
+    #the files are saved at projdir/data/"dataset"/"action class"/seq2_double/
     f1=open(modfile,'w')
     xStartLimit=x
     xEndLimit=x+width
@@ -132,4 +132,4 @@ def displayTrajectories(filepath,trajectorylength,x,y,w,h):
 if __name__=="__main__":
     #getTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/seq2/boxing/10.avi.txt',25,600,15,70,40,70,75)
     #displayTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/MSR2/videos/boxing/27.avi',15,75,45,60,33)
-    displayTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/MSR2/videos/boxing/27.avi',15,75-30,45-16,60+30,33+16)
+    displayTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/MSR2/videos/boxing/27.avi',15,75-30,45-16,60+60,33+33)
