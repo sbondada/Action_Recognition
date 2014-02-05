@@ -38,16 +38,19 @@ def printResults(matchingList):
         print "\n" 
 
 if __name__=='__main__':
-    KTHFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2_bow']
-    MSRFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
-    MSRDoubleFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow_double','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow_double','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow_double']
-    KTHMatchList=constructData(KTHFileLocationList)
-    MSRMatchList=constructData(MSRFileLocationList)
+    #KTHFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2_bow']
+    #MSRFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
+    MSRDoubleFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_400_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_400_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_400_bow']
+    #KTHMatchList=constructData(KTHFileLocationList)
+    #MSRMatchList=constructData(MSRFileLocationList)
     MSRDoubleMatchList=constructData(MSRDoubleFileLocationList)
     #MSRKTHmachingList=performSimilarityMatching(MSRMatchList,KTHMatchList)
     #MSRMSRmatchingList=performSimilarityMatching(MSRMatchList,MSRMatchList)
+    MSRDMSRDmatchingList=performSimilarityMatching(MSRDoubleMatchList,MSRDoubleMatchList)
     #KTHKTHmatchingList=performSimilarityMatching(KTHMatchList,KTHMatchList) 
     #matchDict={"MSR_KTH":MSRKTHmachingList,"MSR_MSR":MSRMSRmatchingList,"KTH_KTH":KTHKTHmatchingList}
-    bowDict={"KTH":KTHMatchList,"MSR": MSRMatchList,"MSR_Double":MSRDoubleMatchList}
-    #scipy.io.savemat("../data/results/matchinglist.mat",matDict)
-    scipy.io.savemat("../data/results/bowDoubleList.mat",bowDict)
+    matchDict={"MSRD_MSRD":MSRDMSRDmatchingList}
+    #bowDict={"KTH":KTHMatchList,"MSR": MSRMatchList,"MSR_Double":MSRDoubleMatchList}
+    bowDict={"MSR_400":MSRDoubleMatchList}
+    scipy.io.savemat("../data/results/400matchinglist.mat",matchDict)
+    scipy.io.savemat("../data/results/bow400List.mat",bowDict)

@@ -131,4 +131,4 @@ def displayTrajectories(filepath,trajectorylength,x,y,w,h):
 # do not use relative paths any where in the code
 if __name__=="__main__":
     #getTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/seq2/boxing/10.avi.txt',25,600,15,70,40,70,75)
-    displayTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/MSR2/videos/boxing/27.avi',15,75,45,60,33)
+    displayTrajectories('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/MSR2/videos/handclapping/12.avi',15,32,64,98,32)

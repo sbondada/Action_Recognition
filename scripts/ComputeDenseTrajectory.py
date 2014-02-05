@@ -41,4 +41,4 @@ def computeDenseTrajectory(location2save):
             #print files
 
 if __name__=='__main__':
-    computeDenseTrajectory('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/MSR1/videos') 
+    computeDenseTrajectory('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/KTH/videos') 

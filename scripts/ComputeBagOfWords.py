@@ -20,7 +20,7 @@ def computeBagOfWords(codefile,inputLocationList,binSize):
         tempsavelocation=''
         for i in range(len(dt_locsplit)-1):
             tempsavelocation+=dt_locsplit[i]+'/'
-        tempsavelocation+='seq2_bow/'       
+        tempsavelocation+='seq2_400_bow/'       
         print tempsavelocation
         for dirpath, dirnames, filenames in os.walk(dt_location):  
             for files in filenames:
@@ -45,4 +45,4 @@ def computeBagOfWords(codefile,inputLocationList,binSize):
 
 if __name__=="__main__":
     inputLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2']
-    computeBagOfWords('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebook.pickle.txt',inputLocationList,100)
+    computeBagOfWords('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebook400pickle.txt',inputLocationList,400)
