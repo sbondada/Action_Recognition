@@ -40,12 +40,12 @@ def constructTrainInputdata(fileLocationList,classLabelList):
 
 
 def constructModel(inputData,inputClassLabel):
-    clf=svm.SVC(kernel=chi2)
+    #clf=svm.SVC(kernel=chi2)
     #clf=svm.SVC(kernel=a_chi2)
     
-    #chi2_feature= AdditiveChi2Sampler(sample_steps=3)
-    #inputData=chi2_feature.fit_transform(inputData)
-    #clf=svm.SVC()
+    chi2_feature= AdditiveChi2Sampler(sample_steps=3)
+    inputData=chi2_feature.fit_transform(inputData)
+    clf=svm.LinearSVC()
     clf.fit(inputData,inputClassLabel)
     return clf
 
@@ -79,9 +79,15 @@ if __name__=="__main__":
     print clf 
     testFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
     testData=constructTestInputdata(testFileLocationList)
+    
 
-    #chi2_feature= AdditiveChi2Sampler(sample_steps=3)
-    #testData=chi2_feature.fit_transform(testData)
+    chi2_feature= AdditiveChi2Sampler(sample_steps=3)
+    testData=chi2_feature.fit_transform(testData)
+
+
+    #this part of the code provides the score of the function when run by a particular function 
+    print "decision function"
+    print clf.decision_function(testData)
 
     predictInfo=clf.predict(testData)
     print testInfo[1]
