@@ -1,5 +1,7 @@
 import os
 from scipy.cluster.vq import kmeans,vq
+from sklearn.kernel_approximation import  AdditiveChi2Sampler
+from sklearn import svm
 from numpy import array
 import pickle
 import tables
@@ -62,7 +64,7 @@ def getBagOfWords(codebook,data):
         bagofwords=[float(x)/len(idx) for x in bagofwords]
     return bagofwords
 
-def getScoresForVideo(filepath,codebookpath,trajectoylength,x,y,w,h,boundingVolumeLength,stepspace,steptime):
+def getScoresForVideo(filepath,modelpath,codebookpath,trajectoylength,x,y,w,h,boundingVolumeLength,stepspace,steptime):
     line = subprocess.check_output(['head', '-1', filepath])
     startframe=int(line.split('\t')[1])
     line = subprocess.check_output(['tail', '-1', filepath])
@@ -70,11 +72,18 @@ def getScoresForVideo(filepath,codebookpath,trajectoylength,x,y,w,h,boundingVolu
     print startframe,endframe
     for frame in range(startframe,endframe-steptime,steptime):
         trajectory=getTrajectories(filepath,frame,frame+boundingVolumeLength,trajectoylength,x,y,w,h) 
-        print trajectory
+        #print trajectory
         f=open(codebookpath)
         codebook=pickle.load(f)
         bow=getBagOfWords(codebook,trajectory)
-        print "bow"+str(bow)
+        #print "bow"+str(bow)
+        modelfile=open(modelpath)
+        clf=pickle.load(modelfile)
+        chi2_feature= AdditiveChi2Sampler(sample_steps=3)
+        testData=chi2_feature.fit_transform(bow)
+        print clf.predict(testData)
+        print clf.decision_function(testData)
+
 
 
 def getEvaluations(datasets,save_location):
@@ -118,18 +127,23 @@ def getEvaluations(datasets,save_location):
                 trajectoyLength=15
                 boundingVolumeLength=endframe-startframe
                 codebookpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebooks/codebook100pickle.txt'
-                getScoresForVideo(full_dtfile_location,codebookpath,trajectoyLength,x,y,w,h,boundingVolumeLength,stepspace,steptime)
+                modelpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/model.pickle.txt'
+                getScoresForVideo(full_dtfile_location,modelpath,codebookpath,trajectoyLength,x,y,w,h,boundingVolumeLength,stepspace,steptime)
                 print x,y,w,h,startframe,endframe
        
 
 if __name__=="__main__":
     datasets=('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/KTH')
     results_location='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results'
-    #getEvaluations(datasets,results_location)
+    getEvaluations(datasets,results_location)
+
+
+    #testing the code
+    '''
     eg_filepath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/10.avi.txt'
     stepspace=3
     steptime=5
     trajectoyLength=15
     codebookpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebooks/codebook100pickle.txt'
     print getTrajectories(eg_filepath,15,400,trajectoyLength,23,45,70,90) 
-        
+    ''' 
