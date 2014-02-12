@@ -40,7 +40,7 @@ def getTrajectories(filepath,startframe,endframe,trajectoylength,x,y,width,heigh
                     inc+=1;
                 else:
                     condition=condition and False
-            print condition 
+            #print condition 
             #adding the trajectory completelyto the file
             if inc>=trajectoylength/2 or condition==True:
                 trajectoryList.append(linesplit[41:])
@@ -64,31 +64,50 @@ def getBagOfWords(codebook,data):
         bagofwords=[float(x)/len(idx) for x in bagofwords]
     return bagofwords
 
-def getScoresForVideo(filepath,modelpath,codebookpath,trajectoylength,x,y,w,h,boundingVolumeLength,stepspace,steptime):
+
+def checkifPositive(boundSample,groundTruth,threshold):
+    return True 
+
+def getScoresForVideo(actionClass,filepath,modelpath,codebookpath,trajectoylength,x,y,w,h,startframe,endframe,stepspace,steptime):
+    videowidth=160
+    videoheight=120
+    boundingVolumeLength=endframe-startframe
+    actionPosition=actionClass-1
+    groundTruth=[x,y,w,h,startframe,endframe]
     line = subprocess.check_output(['head', '-1', filepath])
     startframe=int(line.split('\t')[1])
     line = subprocess.check_output(['tail', '-1', filepath])
     endframe=int(line.split('\t')[1])
+    f=open(codebookpath)
+    codebook=pickle.load(f)
+    modelfile=open(modelpath)
+    clf=pickle.load(modelfile)
+    positiveScores=[]
     print startframe,endframe
     for frame in range(startframe,endframe-steptime,steptime):
-        trajectory=getTrajectories(filepath,frame,frame+boundingVolumeLength,trajectoylength,x,y,w,h) 
-        #print trajectory
-        f=open(codebookpath)
-        codebook=pickle.load(f)
-        bow=getBagOfWords(codebook,trajectory)
-        #print "bow"+str(bow)
-        modelfile=open(modelpath)
-        clf=pickle.load(modelfile)
-        chi2_feature= AdditiveChi2Sampler(sample_steps=3)
-        testData=chi2_feature.fit_transform(bow)
-        print clf.predict(testData)
-        print clf.decision_function(testData)
+        for xstep in range(videowidth-(w+stepspace)):
+            for ystep in range(videoheight-(h+stepspace)):
+                boundSample=[xstep,ystep,w,h,frame,frame+boundingVolumeLength]    
+                if checkifPositive(boundSample,groundTruth,0.2):
+                        trajectory=getTrajectories(filepath,frame,frame+boundingVolumeLength,trajectoylength,xstep,ystep,w,h) 
+                        bow=getBagOfWords(codebook,trajectory)
+                        chi2_feature= AdditiveChi2Sampler(sample_steps=3)
+                        testData=chi2_feature.fit_transform(bow)
+                        score=clf.decision_function(testData)[0][actionPosition]
+                        predictData=clf.predict(testData)
+                        print predictData                        
+                        positiveScores.append([score,predictData])
+                        print score
+    return positiveScores
 
+def getTPFP(positiveScores,thrseholdList,actionClass):
+    return  None
 
-
-def getEvaluations(datasets,save_location):
-    for dataset in datasets:
-        for dirpath, dirnames, filenames in os.walk(dataset):
+def getEvaluations(actionlocationset,save_location):
+    TPFP=[]
+    for actionlocation in actionlocationset:
+        actionClass=0
+        for dirpath, dirnames, filenames in os.walk(actionlocation):
             print "dir path"+dirpath
             print "len of the dir"+str(len(dirnames))
             splitstr=str.split(dirpath,"/")
@@ -96,6 +115,9 @@ def getEvaluations(datasets,save_location):
             print splitstr
             #checking the directory depth
             full_dtpath_location=str(save_location)+"/"+splitstr[-3]+"/"+splitstr[-1]+"/"
+            if len(splitstr)==11:
+                actionClass+=1
+            positiveScores=[]
             #looping the file
             for files in filenames:
                 dtfilesplit=str(files).split('.')
@@ -125,17 +147,23 @@ def getEvaluations(datasets,save_location):
                 stepspace=3
                 steptime=5
                 trajectoyLength=15
-                boundingVolumeLength=endframe-startframe
+                thresholdSteps=30
                 codebookpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebooks/codebook100pickle.txt'
                 modelpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/model.pickle.txt'
-                getScoresForVideo(full_dtfile_location,modelpath,codebookpath,trajectoyLength,x,y,w,h,boundingVolumeLength,stepspace,steptime)
-                print x,y,w,h,startframe,endframe
-       
+                positiveScores.extend(getScoresForVideo(actionClass,full_dtfile_location,modelpath,codebookpath,trajectoyLength,x,y,w,h,startframe,endframe,stepspace,steptime))
+                #print actionPosition,x,y,w,h,startframe,endframe
+            positiveScores.sort(key=lambda x:x[0]) 
+            thresholdList=[]
+            for i in range(0,len(positiveScores),len(positiveScores)/thresholdSteps):
+                thresholdList.append(positiveScores[i][0])
+            TPFP.append(getTPFP(positiveScores,thresholdList,actionClass))
+    return TPFP    
 
 if __name__=="__main__":
-    datasets=('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/KTH')
+    #datasets=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/KTH']
+    testset=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2/seq2/boxing','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2/seq2/handwaving','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2/seq2/handclapping']
     results_location='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results'
-    getEvaluations(datasets,results_location)
+    getEvaluations(testset,results_location)
 
 
     #testing the code
