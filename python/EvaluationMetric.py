@@ -101,7 +101,19 @@ def getScoresForVideo(actionClass,filepath,modelpath,codebookpath,trajectoylengt
     return positiveScores
 
 def getTPFP(positiveScores,thrseholdList,actionClass):
-    return  None
+    TPList=[]
+    FPList=[]
+    for threshold in thrseholdList:
+        tempTP=0
+        tempFP=0
+        for score,predictdata in positiveScores:
+            if score>threshold and predictdata==actionClassa:
+               tempTP+=1 
+            if score<threshold and predictdata!=actionClass:
+                tempFP+=1
+        TPList.append(tempTP)
+        FPList.append(tempFP)
+    return [TPList,FPList]  
 
 def getEvaluations(actionlocationset,save_location):
     TPFP=[]
