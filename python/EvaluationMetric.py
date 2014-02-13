@@ -66,7 +66,30 @@ def getBagOfWords(codebook,data):
 
 
 def checkifPositive(boundSample,groundTruth,threshold):
-    return True 
+    boundingVolume=boundSample[2]*boundSample[3]*(boundSample[5]-boundSample[4])
+    temp=(groundTruth[0]+groundTruth[2])
+    if boundSample[0]>groundTruth[0] and boundSample[0]<temp:
+        w=temp-boundSample[0]
+    temp=(boundSample[0]+boundSample[2])
+    else if groundTruth[0]>boundSample[0] and groundTruth[0]<temp:
+        w=temp-groundTruth[0]
+    temp=(groundtruth[1]+groundtruth[3])
+    if boundsample[1]>groundtruth[1] and boundsample[1]<temp:
+        h=temp-boundsample[1]
+    temp=(boundsample[1]+boundsample[3])
+    else if groundtruth[1]>boundsample[1] and groundtruth[1]<temp:
+        h=temp-groundtruth[1]
+    if boundsample[4]>groundtruth[4] and boundsample[4]<groundTruth[5]:
+        l=groundTruth[5]-boundsample[4]
+    else if groundtruth[4]>boundsample[4] and groundtruth[4]<boundSample[5]:
+        l=boundSample[5]-groundtruth[4]
+    intersectionVolume=w*h*l 
+    unionVolume=(boundingVolume*2)-intersectionVolume
+    intersectionbtunionScore=intersectionVolume/unionVolume
+    if intersectionbtunionScore>threshold:
+        return True 
+    else
+        return False
 
 def getScoresForVideo(actionClass,filepath,modelpath,codebookpath,trajectoylength,x,y,w,h,startframe,endframe,stepspace,steptime):
     videowidth=160
