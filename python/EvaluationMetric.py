@@ -51,7 +51,7 @@ def getBagOfWords(codebook,data):
     #here it accepts the codebook and the trajectory to find to which bin this trajectory is close and assign the index
     #of the code book
     binSize=len(codebook)
-    print "binsize"+str(binSize)
+    #print "binsize"+str(binSize)
     bagofwords=[0]*binSize 
     #there is a chance that the file may not have any trajectories which may lead to empty
     #data vector
@@ -67,71 +67,85 @@ def getBagOfWords(codebook,data):
 
 def checkifPositive(boundSample,groundTruth,threshold):
     boundingVolume=boundSample[2]*boundSample[3]*(boundSample[5]-boundSample[4])
+    #print "volume"+str(boundingVolume)
+    w,h,l=0,0,0
+    # trying to find the w, h and l individually by comparing the limits
     temp=(groundTruth[0]+groundTruth[2])
+    temp1=(boundSample[0]+boundSample[2])
     if boundSample[0]>groundTruth[0] and boundSample[0]<temp:
         w=temp-boundSample[0]
-    temp=(boundSample[0]+boundSample[2])
-    else if groundTruth[0]>boundSample[0] and groundTruth[0]<temp:
-        w=temp-groundTruth[0]
-    temp=(groundtruth[1]+groundtruth[3])
-    if boundsample[1]>groundtruth[1] and boundsample[1]<temp:
-        h=temp-boundsample[1]
-    temp=(boundsample[1]+boundsample[3])
-    else if groundtruth[1]>boundsample[1] and groundtruth[1]<temp:
-        h=temp-groundtruth[1]
-    if boundsample[4]>groundtruth[4] and boundsample[4]<groundTruth[5]:
-        l=groundTruth[5]-boundsample[4]
-    else if groundtruth[4]>boundsample[4] and groundtruth[4]<boundSample[5]:
-        l=boundSample[5]-groundtruth[4]
+    elif groundTruth[0]>boundSample[0] and groundTruth[0]<temp1:
+        w=temp1-groundTruth[0]
+    temp=(groundTruth[1]+groundTruth[3])
+    temp1=(boundSample[1]+boundSample[3])
+    if boundSample[1]>groundTruth[1] and boundSample[1]<temp:
+        h=temp-boundSample[1]
+    elif groundTruth[1]>boundSample[1] and groundTruth[1]<temp1:
+        h=temp1-groundTruth[1]
+    if boundSample[4]>groundTruth[4] and boundSample[4]<groundTruth[5]:
+        l=groundTruth[5]-boundSample[4]
+    elif groundTruth[4]>boundSample[4] and groundTruth[4]<boundSample[5]:
+        l=boundSample[5]-groundTruth[4]
+    #calculating the intersection volume and union volume
+    #print "w="+str(w)+" h="+str(h)+" l="+str(l)
     intersectionVolume=w*h*l 
     unionVolume=(boundingVolume*2)-intersectionVolume
-    intersectionbtunionScore=intersectionVolume/unionVolume
+    #calculating the intersection by union score
+    intersectionbtunionScore=float(intersectionVolume)/unionVolume
+    #print "intersection by union score"+str(intersectionbtunionScore)
+    #comparing the score with the threshold and turning true if the score is greater than threshold
     if intersectionbtunionScore>threshold:
         return True 
-    else
+    else:
         return False
 
-def getScoresForVideo(actionClass,filepath,modelpath,codebookpath,trajectoylength,x,y,w,h,startframe,endframe,stepspace,steptime):
+def getScoresForVideo(actionClass,filepath,model,codebook,trajectoylength,x,y,w,h,startframe,endframe,stepspace,steptime):
     videowidth=160
     videoheight=120
     boundingVolumeLength=endframe-startframe
     actionPosition=actionClass-1
     groundTruth=[x,y,w,h,startframe,endframe]
+    print w,h,endframe-startframe
+    # accessing the start line of the file to get the starting frame of the dense trajectory
     line = subprocess.check_output(['head', '-1', filepath])
-    startframe=int(line.split('\t')[1])
+    initialframe=int(line.split('\t')[1])
+    # accessing the end line of the file to get the end frame of the dense trajectory
     line = subprocess.check_output(['tail', '-1', filepath])
-    endframe=int(line.split('\t')[1])
-    f=open(codebookpath)
-    codebook=pickle.load(f)
-    modelfile=open(modelpath)
-    clf=pickle.load(modelfile)
+    finalframe=int(line.split('\t')[1])
     positiveScores=[]
-    print startframe,endframe
-    for frame in range(startframe,endframe-steptime,steptime):
-        for xstep in range(videowidth-(w+stepspace)):
-            for ystep in range(videoheight-(h+stepspace)):
+    #slow shifting in time
+    for frame in range(initialframe,finalframe-steptime,steptime):
+        #slow shifting in x axis
+        for xstep in range(0,videowidth-(w+stepspace),stepspace):
+            #slow shifting in x axis
+            for ystep in range(0,videoheight-(h+stepspace),stepspace):
+                #constructing the bound sample
                 boundSample=[xstep,ystep,w,h,frame,frame+boundingVolumeLength]    
+                # condition to find the positives by comparing the union by intersection of ground truth and bound value with the threshold
                 if checkifPositive(boundSample,groundTruth,0.2):
                         trajectory=getTrajectories(filepath,frame,frame+boundingVolumeLength,trajectoylength,xstep,ystep,w,h) 
                         bow=getBagOfWords(codebook,trajectory)
                         chi2_feature= AdditiveChi2Sampler(sample_steps=3)
                         testData=chi2_feature.fit_transform(bow)
-                        score=clf.decision_function(testData)[0][actionPosition]
-                        predictData=clf.predict(testData)
-                        print predictData                        
+                        score=model.decision_function(testData)[0][actionPosition]
+                        predictData=model.predict(testData)
+                        #print "predictData"+str(predictData) 
                         positiveScores.append([score,predictData])
-                        print score
+                        #print "score"+str(score)
     return positiveScores
 
 def getTPFP(positiveScores,thrseholdList,actionClass):
+    # empty list to store the true positives and false negatives  for each threshold exactly in the order in which threshold is stored
     TPList=[]
     FPList=[]
+    #looping the thresholdlist for each threshold
     for threshold in thrseholdList:
         tempTP=0
         tempFP=0
+        #looping the whole positive scores list to find the true positivs and false negatives
         for score,predictdata in positiveScores:
-            if score>threshold and predictdata==actionClassa:
-               tempTP+=1 
+            if score>threshold and predictdata==actionClass:
+                tempTP+=1 
             if score<threshold and predictdata!=actionClass:
                 tempFP+=1
         TPList.append(tempTP)
@@ -140,15 +154,19 @@ def getTPFP(positiveScores,thrseholdList,actionClass):
 
 def getEvaluations(actionlocationset,save_location):
     TPFP=[]
+    codebookpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebooks/codebook100pickle.txt'
+    f=open(codebookpath)
+    codebook=pickle.load(f)
+    modelpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/model.pickle.txt'
+    modelfile=open(modelpath)
+    model=pickle.load(modelfile)
+    #looping  the action list
     for actionlocation in actionlocationset:
         actionClass=0
+        #searching for the files in the action List
         for dirpath, dirnames, filenames in os.walk(actionlocation):
-            print "dir path"+dirpath
-            print "len of the dir"+str(len(dirnames))
             splitstr=str.split(dirpath,"/")
             #print "length of split str"+str(len(splitstr))
-            print splitstr
-            #checking the directory depth
             full_dtpath_location=str(save_location)+"/"+splitstr[-3]+"/"+splitstr[-1]+"/"
             if len(splitstr)==11:
                 actionClass+=1
@@ -157,12 +175,12 @@ def getEvaluations(actionlocationset,save_location):
             for files in filenames:
                 dtfilesplit=str(files).split('.')
                 dtfile=''
-                #constructing the name of the file which would be like "videoname".dt.txt
+                #constructing the name of the file which would be like "videoname".avi.txt
                 for index in range(len(dtfilesplit)-1):
                     dtfile+=dtfilesplit[index]+'.'
                 dtfile+='txt'
                 full_dtfile_location=full_dtpath_location+dtfile
-                print full_dtfile_location
+                print "dt file location"+str(full_dtfile_location)
                 #reading the matfile so that we can pass the ground truths to find bounded trajectories
                 gt_file=os.path.join(dirpath,files)
                 print "reading file "+str(gt_file)
@@ -183,9 +201,7 @@ def getEvaluations(actionlocationset,save_location):
                 steptime=5
                 trajectoyLength=15
                 thresholdSteps=30
-                codebookpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/codebooks/codebook100pickle.txt'
-                modelpath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/model.pickle.txt'
-                positiveScores.extend(getScoresForVideo(actionClass,full_dtfile_location,modelpath,codebookpath,trajectoyLength,x,y,w,h,startframe,endframe,stepspace,steptime))
+                positiveScores.extend(getScoresForVideo(actionClass,full_dtfile_location,model,codebook,trajectoyLength,x,y,w,h,startframe,endframe,stepspace,steptime))
                 #print actionPosition,x,y,w,h,startframe,endframe
             positiveScores.sort(key=lambda x:x[0]) 
             thresholdList=[]
@@ -196,11 +212,14 @@ def getEvaluations(actionlocationset,save_location):
 
 if __name__=="__main__":
     #datasets=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/KTH']
+    # testset specifies the location of the groundtruth of the actions which is the data used in turn to perform the evaluation on
     testset=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2/seq2/boxing','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2/seq2/handwaving','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/groundtruth/MSR2/seq2/handclapping']
+    #result_location is the location of the computed dense trajectories and other results storage location 
     results_location='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results'
-    getEvaluations(testset,results_location)
-
-
+    #this function calculates the true positives and false negatives in  the code
+    TPFP=getEvaluations(testset,results_location)
+    f=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/TPFP.pickle.txt')
+    pickle.dump(TPFP,f)
     #testing the code
     '''
     eg_filepath='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/10.avi.txt'
