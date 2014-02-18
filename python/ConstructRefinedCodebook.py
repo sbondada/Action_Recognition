@@ -51,7 +51,7 @@ def randomLineSelection(noOfFiles,noOfLinesperFile,fileLocationList):
                     break
     return [TrajList,HOGList,HOFList,MBHxList,MBHyList] 
 
-def getBagOfWords(codebookList,filename,binSize):
+def getBagOfWords(codebookList,filename,binSizeList):
     TrajList=[]
     HOGList=[]
     HOFList=[]
