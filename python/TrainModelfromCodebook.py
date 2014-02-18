@@ -1,4 +1,5 @@
 import os
+import pickle
 import numpy as np
 import scipy.io
 from sklearn import svm 
@@ -42,7 +43,7 @@ def constructTrainInputdata(fileLocationList,classLabelList):
 def constructModel(inputData,inputClassLabel):
     #clf=svm.SVC(kernel=chi2)
     #clf=svm.SVC(kernel=a_chi2)
-    
+        
     chi2_feature= AdditiveChi2Sampler(sample_steps=3)
     inputData=chi2_feature.fit_transform(inputData)
     clf=svm.LinearSVC()
@@ -72,12 +73,12 @@ def calculateAccuracy(groundtruth,predictedValue):
     return accuracy
 
 if __name__=="__main__":
-    trainFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2_bow']
+    trainFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2_refined_100_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2_refined_100_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2_refined_100_bow']
     classLabelList=[1,2,3]
     testInfo=constructTrainInputdata(trainFileLocationList,classLabelList)
     clf=constructModel(testInfo[0],testInfo[1])
     print clf 
-    testFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_bow']
+    testFileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2_refined_100_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2_refined_100_bow','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2_refined_100_bow']
     testData=constructTestInputdata(testFileLocationList)
     
 
@@ -86,8 +87,8 @@ if __name__=="__main__":
 
 
     #this part of the code provides the score of the function when run by a particular function 
-    print "decision function"
-    print clf.decision_function(testData)
+    #print "decision function"
+    #print clf.decision_function(testData)
 
     predictInfo=clf.predict(testData)
     print testInfo[1]
