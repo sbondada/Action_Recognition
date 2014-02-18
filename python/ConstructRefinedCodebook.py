@@ -90,10 +90,9 @@ def getBagOfWords(codebookList,filename,binSizeList):
             print bagOfWordsPerFeature
             print "length"+str(len(bagOfWordsPerFeature))
         bagOfWords.extend(bagOfWordsPerFeature)
-    return bagOfWordsPerFeature
+    return bagOfWords
 
 if __name__=="__main__":
-    '''
     fileLocationList=['/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/handclapping/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/boxing/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handwaving/seq2','/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/KTH/handclapping/seq2']
     noOfFiles=500
     noOfLinesperFile=400
@@ -125,4 +124,4 @@ if __name__=="__main__":
 
     bow=getBagOfWords(codebookList,'/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/MSR2/boxing/seq2/54.dt.txt',binSizeList)
     print bow
-
+    '''
