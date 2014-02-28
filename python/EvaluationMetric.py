@@ -113,10 +113,34 @@ def getScoresForVideo(actionClass,filepath,model,codebook,trajectoylength,x,y,w,
     line = subprocess.check_output(['tail', '-1', filepath])
     finalframe=int(line.split('\t')[1])
     positiveScores=[]
+    if((startframe-boundingVolumeLength)<initialframe):
+        startframeloop=initialframe
+    else:
+        startframeloop=startframe-boundingVolumeLength
+    if((endframe+boundingVolumeLength)>finalframe):
+        endframeloop=finalframe-boundingVolumeLength
+    else:
+        endframeloop=endframe
     #slow shifting in time
-    for frame in range(initialframe,finalframe-steptime,steptime):
+    for frame in range(startframeloop,endframeloop,steptime):
+        if((x-w)<0):
+            startxstep=0
+        else:
+            startxstep=x-w
+        if((x+w+w)>videowidth):
+            endxstep=videowidth-w
+        else:
+            endxstep=x+w
         #slow shifting in x axis
         for xstep in range(0,videowidth-(w+stepspace),stepspace):
+            if((y-h)<0):
+                startystep=0
+            else:
+                startystep=y-h
+            if((y+h+h)>videoheight):
+                endystep=videoheight-h
+            else:
+                endystep=y+h
             #slow shifting in x axis
             for ystep in range(0,videoheight-(h+stepspace),stepspace):
                 #constructing the bound sample
@@ -218,7 +242,7 @@ if __name__=="__main__":
     results_location='/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results'
     #this function calculates the true positives and false negatives in  the code
     TPFP=getEvaluations(testset,results_location)
-    f=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/TPFP.pickle.txt')
+    f=open('/home/kaushal/Documents/projects/dense_trajectory_and_codebook/data/results/TPFP.pickle.txt',w)
     pickle.dump(TPFP,f)
     #testing the code
     '''
